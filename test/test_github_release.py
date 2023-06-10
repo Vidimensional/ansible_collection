@@ -20,35 +20,24 @@ class TestFetchVersionsFromGithub(unittest.TestCase):
     def test_fetch_versions_from_github_ignore_prereleases(self, MockedGitHubClient):
         MockedGitHubClient.return_value = self.mocked_github_client(self.repo_tags)
 
-        self.assertEqual(
-            [
-                Version("6.6.6"),
-                Version("10.10.10+asdf"),
-            ],
-            fetch_versions_from_github(
-                "repo",
-                "token",
-                allow_prereleases=False,
-            ),
-        )
+        result = fetch_versions_from_github("repo", "token", allow_prereleases=False)
+
+        expected_result = [Version("6.6.6"), Version("10.10.10+asdf")]
+        self.assertEqual(expected_result, result)
 
     @patch("plugins.lookup.github_release.Github")
     def test_fetch_versions_from_github_include_prereleases(self, MockedGitHubClient):
         MockedGitHubClient.return_value = self.mocked_github_client(self.repo_tags)
 
-        self.assertEqual(
-            [
-                Version("6.6.6"),
-                Version("1.1.1-beta1"),
-                Version("0.1.2-rc1"),
-                Version("10.10.10+asdf"),
-            ],
-            fetch_versions_from_github(
-                "repo",
-                "token",
-                allow_prereleases=True,
-            ),
-        )
+        result = fetch_versions_from_github("repo", "token", allow_prereleases=True)
+
+        expected_result = [
+            Version("6.6.6"),
+            Version("1.1.1-beta1"),
+            Version("0.1.2-rc1"),
+            Version("10.10.10+asdf"),
+        ]
+        self.assertEqual(expected_result, result)
 
     def mocked_github_client(self, repo_tags):
         """Returns a `unittest.mock.Mock` implementig the methods of `github.Github` used in `plugins.lookup.github_release`.
