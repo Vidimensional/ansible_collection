@@ -7,10 +7,11 @@ __metaclass__ = type
 
 import re
 
-from ansible.errors import AnsibleOptionsError, AnsibleError, AnsibleParserError
+from ansible.errors import AnsibleOptionsError
 from ansible.plugins.lookup import LookupBase
 from ansible.utils.display import Display
 from github import Github
+from github.GithubException import BadCredentialsException
 from semantic_version import Version
 from semantic_version import Spec
 
@@ -19,6 +20,9 @@ display = Display()
 
 
 class LookupModule(LookupBase):
+    repo = None
+    spec = None
+
     def run(
         self,
         terms: list[str],
@@ -26,10 +30,13 @@ class LookupModule(LookupBase):
         **kwargs: dict[str, str],
     ) -> list[str]:
         try:
-            repo, spec = terms
+            self.repo, self.spec = terms
         except ValueError:
-            m = "'repository' and 'version_specification' are mandatory values"
-            raise AnsibleOptionsError(message=m)
+            raise AnsibleOptionsError(
+                self.format_exception_message(
+                    "'repository' and 'version_specification' are mandatory values."
+                )
+            )
 
         if "token" in kwargs:
             token = kwargs["token"]
@@ -41,14 +48,27 @@ class LookupModule(LookupBase):
         else:
             allow_prereleases = False
 
-        versions = fetch_versions_from_github(repo, token, allow_prereleases)
+        try:
+            versions = fetch_versions_from_github(self.repo, token, allow_prereleases)
+        except BadCredentialsException:
+            raise AnsibleOptionsError(
+                self.format_exception_message("Invalid GitHub token provided.")
+            )
 
-        if spec == "latest":
+        if self.spec == "latest":
             value = max(versions)
         else:
-            value = Spec(spec).select(versions)
+            value = Spec(self.spec).select(versions)
 
         return [str(value)]
+
+    def format_exception_message(self, msg: str) -> str:
+        if not self.spec or not self.repo:
+            args = ""
+        else:
+            args = f"', {self.repo}', '{self.spec}'"
+
+        return f"Error from `lookup('github_release{args}, (...))` -> {msg}"
 
 
 def fetch_versions_from_github(
