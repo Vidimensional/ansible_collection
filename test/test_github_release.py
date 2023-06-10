@@ -7,7 +7,8 @@ import unittest
 from unittest.mock import patch
 from unittest.mock import Mock
 
-import plugins.lookup.github
+from plugins.lookup.github_release import coerce_into_semver
+from plugins.lookup.github_release import fetch_versions_from_github
 
 from semantic_version import Version
 
@@ -15,7 +16,7 @@ from semantic_version import Version
 class TestFetchVersionsFromGithub(unittest.TestCase):
     repo_tags = ["6.6.6", "1.1.1-beta1", "0.1.2-rc1", "10.10.10+asdf"]
 
-    @patch("plugins.lookup.github.Github")
+    @patch("plugins.lookup.github_release.Github")
     def test_fetch_versions_from_github_ignore_prereleases(self, MockedGitHubClient):
         MockedGitHubClient.return_value = self.mocked_github_client(self.repo_tags)
 
@@ -24,14 +25,14 @@ class TestFetchVersionsFromGithub(unittest.TestCase):
                 Version("6.6.6"),
                 Version("10.10.10+asdf"),
             ],
-            plugins.lookup.github.fetch_versions_from_github(
+            fetch_versions_from_github(
                 "repo",
                 "token",
                 allow_prereleases=False,
             ),
         )
 
-    @patch("plugins.lookup.github.Github")
+    @patch("plugins.lookup.github_release.Github")
     def test_fetch_versions_from_github_include_prereleases(self, MockedGitHubClient):
         MockedGitHubClient.return_value = self.mocked_github_client(self.repo_tags)
 
@@ -42,7 +43,7 @@ class TestFetchVersionsFromGithub(unittest.TestCase):
                 Version("0.1.2-rc1"),
                 Version("10.10.10+asdf"),
             ],
-            plugins.lookup.github.fetch_versions_from_github(
+            fetch_versions_from_github(
                 "repo",
                 "token",
                 allow_prereleases=True,
@@ -50,13 +51,13 @@ class TestFetchVersionsFromGithub(unittest.TestCase):
         )
 
     def mocked_github_client(self, repo_tags):
-        """Returns a `unittest.mock.Mock` implementig the methods of `github.Github` used in `plugins.lookup.github`.
+        """Returns a `unittest.mock.Mock` implementig the methods of `github.Github` used in `plugins.lookup.github_release`.
 
         Args:
         - `repo_tags` (`str`): Name of the tags that the mocked client repo should return for the repo.
 
         Returns:
-        - A `unittest.mock.Mock` implementig the methods of `github.Github` used in `plugins.lookup.github`.
+        - A `unittest.mock.Mock` implementig the methods of `github.Github` used in `plugins.lookup.github_release`.
         """
         tag_list = []
         for name in repo_tags:
@@ -100,7 +101,7 @@ class TestCoerceIntoSemver(unittest.TestCase):
         }
 
         for c in cases:
-            self.assertEqual(cases[c], plugins.lookup.github.coerce_into_semver(c))
+            self.assertEqual(cases[c], coerce_into_semver(c))
 
 
 if __name__ == "__main__":
