@@ -129,6 +129,3 @@ def coerce_into_semver(version_string: str) -> Version:
         raise ValueError(f"String `{version_string}` does not match semver format.")
 
     return Version.coerce(match.group(1))
-
-
-# access_token = "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"
