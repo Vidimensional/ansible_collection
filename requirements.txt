@@ -1,0 +1,3 @@
+ansible
+semantic-version
+PyGithub
