@@ -5,6 +5,49 @@
 
 __metaclass__ = type
 
+# TODO Expand doc https://github.com/ansible/ansible/blob/devel/examples/DOCUMENTATION.yml
+DOCUMENTATION = """
+name: github_release
+
+short_description: Queries release information of a GitHub repo.
+
+author: "Daniel Vidal de la Rubia (@vidimensional)"
+
+description:
+  - item1
+  - item2
+  - etc
+
+options:
+  _terms:
+    description: Repo to query (USER/REPO_NAME)
+    required: True
+
+  spec:
+    description: |
+      The query for the release to retrieve,
+      - It can be `latest` that would retireve the most recent version (according to the SemVer specification https://semver.org/)
+      - It can be a python-semanticversion range specification (more info in
+      https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec)
+    required: true
+    choices:
+      - latest
+      - range specification
+    version_added: 0.0.1
+
+  token:
+    description: If provided, it'd be used to send requests to GitHub API. Useful to avoid API request limit errors
+    required: false
+    default: None
+    version_added: 0.0.1
+
+  allow_prereleases:
+    description: If False it'll ignore the releases with pre-release versions (https://semver.org/spec/v2.0.0.html#spec-item-9)
+    required: false
+    default: "False"
+    version_added: 0.0.1
+"""
+
 import re
 
 from ansible.errors import AnsibleError
