@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = """
 name: github_release
 
-short_description: Queries release information of a GitHub repo.
+short_description: Lookup release information for a given GitHub repository.
 
 author: "Daniel Vidal de la Rubia (@vidimensional)"
 
