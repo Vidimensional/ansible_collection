@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+        with:
+          path: ansible_collections/${{ github.repository }}
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
@@ -23,6 +25,12 @@ jobs:
           if [ -f requirements.txt ]; then 
             pip install -r requirements.txt
           fi
+        working-directory: ansible_collections/${{ github.repository }}
+
+      - name: Run Ansible sanity checks
+        run: ansible-test sanity -v --docker --redact --python 3.10 --color yes
+        working-directory: ansible_collections/${{ github.repository }}
 
       - name: Run unit tests
-        run: python -m unittest discover -s test/unit/
+        run: python -m unittest discover -s ./test/unit/
+        working-directory: ansible_collections/${{ github.repository }}

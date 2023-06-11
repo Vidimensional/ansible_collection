@@ -1,0 +1,1 @@
+plugins/lookup/github_release.py validate-modules:missing-gplv3-license # 🤷 https://github.com/ansible/ansible/issues/67032#issuecomment-581439436
