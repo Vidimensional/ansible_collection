@@ -79,7 +79,8 @@ def fetch_versions_from_github(
     """Fetch the list of tags from the specified GitHub repo.
 
     Args:
-    - `repo_name` (`str`): The repo where to fetch the tag list. Sould be in the form of username/repo or organization/repo, for example '`aws/aws-cli`' would reference https://github.com/aws/aws-cli repository.
+    - `repo_name` (`str`): The repo where to fetch the tag list. Sould be in the form of username/repo or organization/repo, for example '`aws/aws-cli`'
+    would reference https://github.com/aws/aws-cli repository.
     - `token` (`str`): (Optional) If provided, it'd be used to send requests to GitHub API. Useful to avoid API request limit errors.
     - `allow_prereleases` (`bool`): (Default: False) If True it'll add the tags with pre-release versions (https://semver.org/spec/v2.0.0.html#spec-item-9).
 
