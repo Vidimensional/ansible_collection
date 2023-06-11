@@ -93,7 +93,7 @@ def fetch_versions_from_github(repo_name, token=None, allow_prereleases=False):
     gh = Github(token)
     repo = gh.get_repo(repo_name)
 
-    versions: list[Version] = []
+    versions = []
     for tag in repo.get_tags():
         try:
             semver = coerce_into_semver(tag.name)
