@@ -5,14 +5,22 @@ on:
     branches:
       - main
 
+env:
+  COLLECTION_PATH: ansible_collections/vidimensional/ansible_release_lookup
+
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ${{ env.COLLECTION_PATH }}
+
     steps:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          path: ansible_collections/${{ github.repository }}
+          path: ${{ env.COLLECTION_PATH }}
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
@@ -25,12 +33,22 @@ jobs:
           if [ -f requirements.txt ]; then 
             pip install -r requirements.txt
           fi
-        working-directory: ansible_collections/${{ github.repository }}
 
       - name: Run Ansible sanity checks
         run: ansible-test sanity -v --docker --redact --python 3.10 --color yes
-        working-directory: ansible_collections/${{ github.repository }}
+
+      - name: Show Ansible sanity checks errors
+        if: ${{ failure() }}
+        run: |
+          # Output errors.
+          jq -C . tests/output/bot/*
+          echo $GITHUB_STEP_SUMMARY
+
+          # Save errors in summary
+          echo '# Failed sanity checks' >> ${GITHUB_STEP_SUMMARY}
+          echo '```json' >> ${GITHUB_STEP_SUMMARY}
+          cat tests/output/bot/* >> ${GITHUB_STEP_SUMMARY}
+          echo '```' >> ${GITHUB_STEP_SUMMARY}
 
       - name: Run unit tests
         run: python -m unittest discover -s ./test/unit/
-        working-directory: ansible_collections/${{ github.repository }}
