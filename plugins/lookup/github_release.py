@@ -7,14 +7,20 @@ __metaclass__ = type
 
 import re
 
+from ansible.errors import AnsibleError
 from ansible.errors import AnsibleOptionsError
 from ansible.plugins.lookup import LookupBase
 from ansible.utils.display import Display
-from github import Github
-from github.GithubException import BadCredentialsException
-from semantic_version import Version
-from semantic_version import Spec
 
+try:
+    from github import Github
+    from github.GithubException import BadCredentialsException
+    from semantic_version import Version
+    from semantic_version import Spec
+except ImportError as err:
+    IMPORT_ERROR = err
+else:
+    IMPORT_ERROR = None
 
 display = Display()
 
@@ -37,6 +43,11 @@ class LookupModule(LookupBase):
                     "'repository' and 'version_specification' are mandatory values."
                 )
             )
+
+        if IMPORT_ERROR:
+            raise AnsibleError(
+                f"Required Python library '{IMPORT_ERROR.name}' not installed"
+            ) from IMPORT_ERROR
 
         if "token" in kwargs:
             token = kwargs["token"]
