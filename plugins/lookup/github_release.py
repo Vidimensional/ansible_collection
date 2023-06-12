@@ -7,16 +7,19 @@ __metaclass__ = type
 
 # TODO Expand doc https://github.com/ansible/ansible/blob/devel/examples/DOCUMENTATION.yml
 DOCUMENTATION = """
+---
 name: github_release
 
 short_description: Lookup release information for a given GitHub repository.
 
 author: "Daniel Vidal de la Rubia (@vidimensional)"
 
-description:
-  - item1
-  - item2
-  - etc
+description: |
+  - Lookup release information for a given GitHub repository.
+  - We can get either the latest release.
+  - Or we can get a release that matches
+    [python-semanticversion SimpleSpec](https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec)
+  - Also we can disable the prereleases from the query.
 
 options:
   _terms:
@@ -26,8 +29,8 @@ options:
   spec:
     description: |
       The query for the release to retrieve,
-      - It can be `latest` that would retireve the most recent version (according to the SemVer specification https://semver.org/)
-      - It can be a python-semanticversion range specification (more info in
+      * It can be `latest` that would retireve the most recent version (according to the SemVer specification https://semver.org/)
+      * It can be a python-semanticversion range specification (more info in
       https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec)
     required: true
     choices:
