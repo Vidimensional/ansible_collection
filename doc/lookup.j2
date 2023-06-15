@@ -1,0 +1,49 @@
+# {{ doc.name }} lookup 
+
+{{ doc.short_description }}
+
+- [Synopsis](#synopsis)
+- [Parameters](#parameters)
+- [Keyword parameters](#keyword-parameters)
+- [Examples](#examples)
+- [Author](#author)
+
+## Synopsis
+
+{{ doc.description }}
+
+## Parameters
+
+{% for term in doc.options._terms %}
+#### {{ loop.index }}
+- **Description:** {{ term.description }}
+- **Type:** string
+- **Required:** True
+- **Version added:** {{ term.version_added }}
+{% endfor %}
+
+## Keyword parameters
+
+{% for key in doc.options %}{% if key != "_terms" %}
+#### {{ key }}
+
+- **Description:** {{ doc.options[key].description }}
+- **Type:** {{ doc.options[key].type }}
+- **Required:** {{ doc.options[key].required }}
+- **Version added:** {{ doc.options[key].version_added }}
+{% if doc.options[key].choices is defined %}- **Choices:**
+{%- for choice in doc.options[key].choices %}
+  - {{ choice }}
+{%- endfor %}
+{% endif %}
+{% endif %}{% endfor %}
+
+## Examples
+
+```yaml
+{{ examples }}
+```
+
+## Author
+
+- Daniel Vidal de la Rubia ([@vidimensional](https://github.com/Vidimensional))

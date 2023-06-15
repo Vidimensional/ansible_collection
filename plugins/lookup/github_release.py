@@ -7,7 +7,6 @@ __metaclass__ = type
 
 # TODO Expand doc https://github.com/ansible/ansible/blob/devel/examples/DOCUMENTATION.yml
 DOCUMENTATION = """
----
 name: github_release
 
 short_description: Lookup release information for a given GitHub repository.
@@ -22,34 +21,40 @@ description: |
   - Also we can disable the prereleases from the query.
 
 options:
-  _terms:
-    description: Repo to query (USER/REPO_NAME)
-    required: True
+    _terms:
+        - description: GitHub repository to query (`USER/REPO_NAME`).
+          version_added: 0.0.1
 
-  spec:
-    description: |
-      The query for the release to retrieve,
-      * It can be `latest` that would retireve the most recent version (according to the SemVer specification https://semver.org/)
-      * It can be a python-semanticversion range specification (more info in
-      https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec)
-    required: true
-    choices:
-      - latest
-      - range specification
-    version_added: 0.0.1
+        - description: >-
+            The query for the release to retrieve.It can be `latest` that would retireve the most recent version. Or it can be a
+            [`python-semanticversion`](https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec) range
+            specification.
+          version_added: 0.0.1
 
-  token:
-    description: If provided, it'd be used to send requests to GitHub API. Useful to avoid API request limit errors
-    required: false
-    default: None
-    version_added: 0.0.1
+    token:
+        description: If provided, it'd be used to send requests to GitHub API. Useful to avoid API request limit errors or accesing private repos.
+        required: false
+        type: string
+        default: None
+        version_added: 0.0.1
 
-  allow_prereleases:
-    description: If False it'll ignore the releases with pre-release versions (https://semver.org/spec/v2.0.0.html#spec-item-9)
-    required: false
-    default: "False"
-    version_added: 0.0.1
+    allow_prereleases:
+        description: If False it'll ignore the releases with [pre-release versions](https://semver.org/spec/v2.0.0.html#spec-item-9).
+        type: boolean
+        required: false
+        default: "False"
+        version_added: 0.0.1
 """
+
+# EXAMPLES = """
+# - name: Get the latest Terraform final release.
+#   ansible.builtin.debug:
+#     msg: "{{ lookup('github_release', 'hashicorp/terraform', 'latest') }}"
+
+# - name: Get the latest AWS-CLI (including preseleases).
+#   ansible.builtin.debug:
+#     msg: "{{ lookup('github_release', 'aws/aws-cli', 'latest', allow_prereleases=True) }}"
+# """
 
 import re
 
