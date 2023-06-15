@@ -3,28 +3,29 @@
 {{ doc.short_description }}
 
 - [Synopsis](#synopsis)
-- [Parameters](#parameters)
-- [Keyword parameters](#keyword-parameters)
+- [Requirements](#requirements)
 - [Examples](#examples)
+- [Keyword parameters](#keyword-parameters)
 - [Author](#author)
 
 ## Synopsis
 
 {{ doc.description }}
 
-## Parameters
-
-{% for term in doc.options._terms %}
-#### {{ loop.index }}
-- **Description:** {{ term.description }}
-- **Type:** string
-- **Required:** True
-- **Version added:** {{ term.version_added }}
+## Requirements
+{% for req in doc.requirements %}
+- {{ req -}}
 {% endfor %}
+
+## Examples
+
+```yaml
+{{ examples }}
+```
 
 ## Keyword parameters
 
-{% for key in doc.options %}{% if key != "_terms" %}
+{% for key in doc.options %}
 #### {{ key }}
 
 - **Description:** {{ doc.options[key].description }}
@@ -36,13 +37,7 @@
   - {{ choice }}
 {%- endfor %}
 {% endif %}
-{% endif %}{% endfor %}
-
-## Examples
-
-```yaml
-{{ examples }}
-```
+{% endfor %}
 
 ## Author
 

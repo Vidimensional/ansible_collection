@@ -5,56 +5,72 @@
 
 __metaclass__ = type
 
-# TODO Expand doc https://github.com/ansible/ansible/blob/devel/examples/DOCUMENTATION.yml
 DOCUMENTATION = """
-name: github_release
+    name: github_release
+    author: "Daniel Vidal de la Rubia (@vidimensional)"
+    short_description: Lookup release information for a given GitHub repository.
+    description: |
+        - Lookup release information for a given GitHub repository.
+        - We can get either the latest release.
+        - Or we can get a release that matches
+        [python-semanticversion SimpleSpec](https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec)
+        constrain.
+        - Also we can disable the prereleases from the query.
 
-short_description: Lookup release information for a given GitHub repository.
+    requirements:
+        - '[semantic-version](https://github.com/rbarrois/python-semanticversion)>=2.10.0'
+        - '[PyGithub](https://github.com/PyGithub/PyGithub)>=1.58.0'
 
-author: "Daniel Vidal de la Rubia (@vidimensional)"
+    options:
+        repo:
+            description: GitHub repository to query (`USER/REPO_NAME`).
+            required: True
+            type: string
+            default: null
+            version_added: 0.0.1
 
-description: |
-  - Lookup release information for a given GitHub repository.
-  - We can get either the latest release.
-  - Or we can get a release that matches
-    [python-semanticversion SimpleSpec](https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec)
-  - Also we can disable the prereleases from the query.
+        spec:
+            description: >-
+                The query for the release to retrieve. It can be `latest` that would retireve the most recent version. Or it can be a
+                [`python-semanticversion SimpleSpec`](https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec).
+            required: False
+            type: string
+            default: latest
+            version_added: 0.0.1
 
-options:
-    _terms:
-        - description: GitHub repository to query (`USER/REPO_NAME`).
-          version_added: 0.0.1
+        token:
+            description: If provided, it'd be used to send requests to GitHub API. Useful to avoid API request limit errors or accesing private repos.
+            required: false
+            type: string
+            default: None
+            version_added: 0.0.1
 
-        - description: >-
-            The query for the release to retrieve.It can be `latest` that would retireve the most recent version. Or it can be a
-            [`python-semanticversion`](https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec) range
-            specification.
-          version_added: 0.0.1
-
-    token:
-        description: If provided, it'd be used to send requests to GitHub API. Useful to avoid API request limit errors or accesing private repos.
-        required: false
-        type: string
-        default: None
-        version_added: 0.0.1
-
-    allow_prereleases:
-        description: If False it'll ignore the releases with [pre-release versions](https://semver.org/spec/v2.0.0.html#spec-item-9).
-        type: boolean
-        required: false
-        default: "False"
-        version_added: 0.0.1
+        allow_prereleases:
+            description: If False it'll ignore the releases with [pre-release versions](https://semver.org/spec/v2.0.0.html#spec-item-9).
+            type: boolean
+            required: false
+            default: "False"
+            version_added: 0.0.1
 """
 
-# EXAMPLES = """
-# - name: Get the latest Terraform final release.
-#   ansible.builtin.debug:
-#     msg: "{{ lookup('github_release', 'hashicorp/terraform', 'latest') }}"
+EXAMPLES = """
+- name: Get the latest Terraform final release.
+  ansible.builtin.debug:
+    msg: "{{ lookup('github_release', repo='hashicorp/terraform') }}"
 
-# - name: Get the latest AWS-CLI (including preseleases).
-#   ansible.builtin.debug:
-#     msg: "{{ lookup('github_release', 'aws/aws-cli', 'latest', allow_prereleases=True) }}"
-# """
+- name: Get the latest AWS-CLI (including preseleases).
+  ansible.builtin.debug:
+    msg: "{{ lookup('github_release', repo='aws/aws-cli', spec='latest', allow_prereleases=True) }}"
+
+- name: Get latest release from a private repo.
+  ansible.builtin.debug:
+    # ⚠️ Be careful not to send the plain text token to your VCS.
+    msg: "{{ lookup('github_release', repo='myorg/some-private-repo',  token='1234') }}"
+
+- name: Get latest Ansible version for branch 2.13
+  ansible.builtin.debug:
+    msg: "{{ lookup('github_release', repo='ansible/ansible', spec='>=2.13.0,<2.14') }}"
+"""
 
 import re
 
@@ -81,30 +97,22 @@ class LookupModule(LookupBase):
     spec = None
 
     def run(self, terms, variables=None, **kwargs):
-        try:
-            self.repo, self.spec = terms
-        except ValueError:
-            raise AnsibleOptionsError(
-                self.format_exception_message(
-                    "'repository' and 'version_specification' are mandatory values."
-                )
-            )
+        self.set_options(var_options=variables, direct=kwargs)
+
+        self.repo = self.get_option("repo")
+        self.spec = self.get_option("spec")
+        token = self.get_option("token")
+        allow_prereleases = self.get_option("allow_prereleases")
 
         if IMPORT_ERROR:
             raise AnsibleError(
                 f"Required Python library '{IMPORT_ERROR.name}' not installed"
             ) from IMPORT_ERROR
 
-        if "token" in kwargs:
-            token = kwargs["token"]
-        else:
+        display.v(f"token -> {token}")
+        display.v(f"type -> {type(token)}")
+        if token == "None":
             token = None
-
-        if "allow_prereleases" in kwargs:
-            allow_prereleases = kwargs["allow_prereleases"]
-        else:
-            allow_prereleases = False
-
         try:
             versions = fetch_versions_from_github(self.repo, token, allow_prereleases)
         except BadCredentialsException:
