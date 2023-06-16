@@ -1,4 +1,5 @@
 # Copyright © 2023 Daniel Vidal de la Rubia <https://github.com/Vidimensional>
+#
 # This work is free. You can redistribute it and/or modify it under the
 # terms of the Do What The Fuck You Want To Public License, Version 2,
 # as published by Sam Hocevar. See the LICENSE file for more details.
@@ -16,11 +17,9 @@ DOCUMENTATION = """
         [python-semanticversion SimpleSpec](https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec)
         constrain.
         - Also we can disable the prereleases from the query.
-
     requirements:
         - '[semantic-version](https://github.com/rbarrois/python-semanticversion)>=2.10.0'
         - '[PyGithub](https://github.com/PyGithub/PyGithub)>=1.58.0'
-
     options:
         repo:
             description: GitHub repository to query (`USER/REPO_NAME`).
@@ -28,7 +27,6 @@ DOCUMENTATION = """
             type: string
             default: null
             version_added: 0.0.1
-
         spec:
             description: >-
                 The query for the release to retrieve. It can be `latest` that would retireve the most recent version. Or it can be a
@@ -37,14 +35,12 @@ DOCUMENTATION = """
             type: string
             default: latest
             version_added: 0.0.1
-
         token:
             description: If provided, it'd be used to send requests to GitHub API. Useful to avoid API request limit errors or accesing private repos.
             required: false
             type: string
             default: None
             version_added: 0.0.1
-
         allow_prereleases:
             description: If False it'll ignore the releases with [pre-release versions](https://semver.org/spec/v2.0.0.html#spec-item-9).
             type: boolean
@@ -126,6 +122,14 @@ class LookupModule(LookupBase):
         return [str(value)]
 
     def format_exception_message(self, msg):
+        """'Wraps message adding lookup information. In order to make it easier to identify from where comes the exception.
+
+        Args:
+        - `msg` (str): Message to wrap.
+
+        Returns:
+        - `str`: Message wrapped with info telling that was lauched from the `github_release` lookup.
+        """
         if not self.spec or not self.repo:
             args = ""
         else:
@@ -138,10 +142,9 @@ def fetch_versions_from_github(repo_name, token=None, allow_prereleases=False):
     """Fetch the list of tags from the specified GitHub repo.
 
     Args:
-    - `repo_name` (`str`): The repo where to fetch the tag list. Sould be in the form of username/repo or organization/repo, for example '`aws/aws-cli`'
-    would reference https://github.com/aws/aws-cli repository.
-    - `token` (`str`): (Optional) If provided, it'd be used to send requests to GitHub API. Useful to avoid API request limit errors.
-    - `allow_prereleases` (`bool`): (Default: False) If True it'll add the tags with pre-release versions (https://semver.org/spec/v2.0.0.html#spec-item-9).
+    - `repo_name` (str): The repo where to fetch the tag list. Sould be in the form of username/repo or organization/repo, for example 'aws/aws-cli' would
+    reference https://github.com/aws/aws-cli repository.
+    - `token` (str): (Optional) If provided, it'd be used to send requests to GitHub API. Useful to avoid API request limit errors.
 
     Returns:
     - `list[semantic_version.Version]`: The list of versions in GitHub repo, that follows the semver specification.
@@ -168,16 +171,16 @@ def fetch_versions_from_github(repo_name, token=None, allow_prereleases=False):
 
 
 def coerce_into_semver(version_string):
-    """Wraps `semantic_version.Version.coerce()` to ensure it correctly coerces versions with string prefix like: v1.2.3 or go1.1rc1
+    """Wraps `semantic_version.Version.coerce()` to ensure it correctly coerces versions with string prefix like: v1.2.3 or go1.1rc1.
 
     Args:
-    - `version_string` (`str`): String representation of the version to coerce.
+    - `version_string` (str): String representation of the version to coerce.
 
     Returns:
     - `semantic_version.Version` representation of the input string.
 
     Raises:
-    - `ValueError`: If string provided does not match with a valid semver.
+    - `ValueError`: If string provided does not have a valid semver form.
     """
 
     match = re.match(
