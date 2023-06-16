@@ -35,7 +35,7 @@ jobs:
           fi
 
       - name: Run Ansible sanity checks
-        run: ansible-test sanity -v --docker --redact --python 3.10 --color yes
+        run: ansible-test sanity -v --venv --redact --python 3.10 --color yes
 
       - name: Show Ansible sanity checks errors
         if: ${{ failure() }}
@@ -56,4 +56,4 @@ jobs:
       - name: Run unit tests
         run: |
           cat requirements* > tests/unit/requirements.txt
-          ansible-test units -v --docker --python 3.10 --color yes --requirements
+          ansible-test units -v --venv --python 3.10 --color yes --requirements
