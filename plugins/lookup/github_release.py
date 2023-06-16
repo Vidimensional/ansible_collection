@@ -101,18 +101,16 @@ class LookupModule(LookupBase):
 
         self.repo = self.get_option("repo")
         self.spec = self.get_option("spec")
-        token = self.get_option("token")
         allow_prereleases = self.get_option("allow_prereleases")
+        token = self.get_option("token")
+        if token == "None":
+            token = None
 
         if IMPORT_ERROR:
             raise AnsibleError(
                 f"Required Python library '{IMPORT_ERROR.name}' not installed"
             ) from IMPORT_ERROR
 
-        display.v(f"token -> {token}")
-        display.v(f"type -> {type(token)}")
-        if token == "None":
-            token = None
         try:
             versions = fetch_versions_from_github(self.repo, token, allow_prereleases)
         except BadCredentialsException:
