@@ -56,4 +56,4 @@ jobs:
       - name: Run unit tests
         run: |
           cat requirements* > tests/unit/requirements.txt
-          ansible-test units -v --venv --docker 3.10 --color yes --requirements
+          ansible-test units -v --docker --python 3.10 --color yes --requirements
