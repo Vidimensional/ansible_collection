@@ -92,18 +92,13 @@ class LookupModule(LookupBase):
     repo = None
     spec = None
 
-    def run(
-        self,
-        _,
-        variables: dict[str, str] = None,
-        **kwargs: dict[str, str],
-    ) -> list[str]:
+    def run(self, terms, variables=None, **kwargs):
         self.set_options(var_options=variables, direct=kwargs)
 
-        self.repo: str = self.get_option("repo")
-        self.spec: str = self.get_option("spec")
-        allow_prereleases: str = self.get_option("allow_prereleases")
-        token: str | None = self.get_option("token")
+        self.repo = self.get_option("repo")
+        self.spec = self.get_option("spec")
+        allow_prereleases = self.get_option("allow_prereleases")
+        token = self.get_option("token")
         if token == "None":
             token = None
 
@@ -126,7 +121,7 @@ class LookupModule(LookupBase):
 
         return [str(value)]
 
-    def format_exception_message(self, msg: str) -> str:
+    def format_exception_message(self, msg):
         """'Wraps message adding lookup information. In order to make it easier to identify from where comes the exception.
 
         Args:
@@ -143,11 +138,7 @@ class LookupModule(LookupBase):
         return f"Error from `lookup('github_release{args}, (...))` -> {msg}"
 
 
-def fetch_versions_from_github(
-    repo_name: str,
-    token: str | None = None,
-    allow_prereleases: bool = False,
-) -> list[Version]:
+def fetch_versions_from_github(repo_name, token=None, allow_prereleases=False):
     """Fetch the list of tags from the specified GitHub repo.
 
     Args:
@@ -179,7 +170,7 @@ def fetch_versions_from_github(
     return versions
 
 
-def coerce_into_semver(version_string: str) -> Version:
+def coerce_into_semver(version_string):
     """Wraps `semantic_version.Version.coerce()` to ensure it correctly coerces versions with string prefix like: v1.2.3 or go1.1rc1.
 
     Args:
