@@ -1,6 +1,10 @@
-# github_release lookup 
+# github_release lookup
+
+![example workflow](https://github.com/Vidimensional/ansible_github_releases_lookup/actions/workflows/tests.yaml/badge.svg)
 
 Lookup release information for a given GitHub repository.
+
+## Table of contents
 
 - [Synopsis](#synopsis)
 - [Requirements](#requirements)
