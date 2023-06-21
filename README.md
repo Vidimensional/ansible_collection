@@ -6,11 +6,18 @@ Lookup release information for a given GitHub repository.
 
 ## Table of contents
 
+- [Install](#install)
 - [Synopsis](#synopsis)
 - [Requirements](#requirements)
 - [Examples](#examples)
 - [Keyword parameters](#keyword-parameters)
 - [Author](#author)
+
+## Install
+
+```
+ansible-galaxy collection install vidimensional.github_release_lookup
+```
 
 ## Synopsis
 
