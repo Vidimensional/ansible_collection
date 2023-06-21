@@ -1,0 +1,11 @@
+name: Merge to master
+
+on:
+  push:
+    branches:
+      - main
+      - test_workflow
+
+jobs:
+  Test:
+    uses: vidimensional/ansible_github_releases_lookup/.github/workflows/tests.yaml@test_workflow

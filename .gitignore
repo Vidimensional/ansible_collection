@@ -1,3 +1,4 @@
+galaxy.yml
 tests/output/
 tests/unit/requirements.txt
 venv/

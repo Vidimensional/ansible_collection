@@ -1,0 +1,45 @@
+# Reusable workflow that builds the package and uploads it to Ansible Galaxy.
+
+name: Tests
+
+on:
+  workflow_call:
+    secrets:
+      ANSIBLE_GALAXY_API_KEY:
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ensure tag follows semantic version
+        run: |
+          if echo "${GITHUB_REF_NAME}" | grep -Pq '^(\d|[1-9]\d+)\.(\d|[1-9]\d+)\.(\d|[1-9]\d+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$'; then
+            echo "'${GITHUB_REF_NAME}' has a valid semantic version format."
+          else
+            echo "'${GITHUB_REF_NAME}' hasn't a valid semantic version format."
+            false
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install tools
+        run: pip install j2cli ansible
+
+      - name: Generate galaxy.yml
+        run: version=$GITHUB_REF_NAME j2 -f env galaxy.yml.j2 > galaxy.yml
+
+      - name: Build collection tarball
+        run: ansible-galaxy collection build
+
+      - name: Publish collection
+        env:
+          ANSIBLE_GALAXY_API_KEY: ${{ secrets.ANSIBLE_GALAXY_API_KEY }}
+        run: ansible-galaxy collection publish --token "${ANSIBLE_GALAXY_API_KEY}" "vidimensional-github_release_lookup-${GITHUB_REF_NAME}.tar.gz"
