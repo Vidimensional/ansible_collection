@@ -1,5 +1,6 @@
 galaxy.yml
 tests/output/
 tests/unit/requirements.txt
+tmp/
 venv/
 __pycache__/

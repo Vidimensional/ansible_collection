@@ -10,12 +10,9 @@ unittest:
 	cat requirements* > tests/unit/requirements.txt
 	ansible-test units -v --venv --python 3.10 --color yes --requirements
 
-.PHONY: docs readme
-readme: docs
+.PHONY: docs
 docs:
-	ansible-doc -t lookup github_release -M "${PWD}/plugins/lookup/" --json | jq .github_release > /tmp/data.json && \
-		j2 -f json README.md.j2 /tmp/data.json > README.md && \
-		rm /tmp/data.json
+	bash scripts/build_docs.sh
 
 .PHONY: req requirements requirements-dev
 req: requirements requirements-dev
