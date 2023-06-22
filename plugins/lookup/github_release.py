@@ -52,20 +52,20 @@ DOCUMENTATION = """
 EXAMPLES = """
 - name: Get the latest Terraform final release.
   ansible.builtin.debug:
-    msg: "{{ lookup('github_release', repo='hashicorp/terraform') }}"
+    msg: "{{ lookup('vidimensional.collection.github_release', repo='hashicorp/terraform') }}"
 
 - name: Get the latest AWS-CLI (including preseleases).
   ansible.builtin.debug:
-    msg: "{{ lookup('github_release', repo='aws/aws-cli', spec='latest', allow_prereleases=True) }}"
+    msg: "{{ lookup('vidimensional.collection.github_release', repo='aws/aws-cli', spec='latest', allow_prereleases=True) }}"
 
 - name: Get latest release from a private repo.
   ansible.builtin.debug:
     # ⚠️ Be careful not to send the plain text token to your VCS.
-    msg: "{{ lookup('github_release', repo='myorg/some-private-repo',  token='1234') }}"
+    msg: "{{ lookup('vidimensional.collection.github_release', repo='myorg/some-private-repo',  token='1234') }}"
 
 - name: Get latest Ansible version for branch 2.13
   ansible.builtin.debug:
-    msg: "{{ lookup('github_release', repo='ansible/ansible', spec='>=2.13.0,<2.14') }}"
+    msg: "{{ lookup('vidimensional.collection.github_release', repo='ansible/ansible', spec='>=2.13.0,<2.14') }}"
 """
 
 import re
