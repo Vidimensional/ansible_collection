@@ -1,10 +1,9 @@
-name: Merge to master
+name: Push to master
 
 on:
   push:
     branches:
       - main
-      - test_workflow
 
 jobs:
   Test:
