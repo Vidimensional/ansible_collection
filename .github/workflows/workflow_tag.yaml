@@ -7,10 +7,10 @@ on:
 
 jobs:
   RunTests:
-    uses: vidimensional/ansible_github_releases_lookup/.github/workflows/tests.yaml@main
+    uses: vidimensional/ansible_collection/.github/workflows/tests.yaml@main
 
   PublishToAnsibleGalaxy:
     needs: RunTests
-    uses: vidimensional/ansible_github_releases_lookup/.github/workflows/publish.yaml@main
+    uses: vidimensional/ansible_collection/.github/workflows/publish.yaml@main
     secrets:
       ANSIBLE_GALAXY_API_KEY: ${{ secrets.ANSIBLE_GALAXY_API_KEY }}

@@ -7,4 +7,4 @@ on:
 
 jobs:
   Test:
-    uses: vidimensional/ansible_github_releases_lookup/.github/workflows/tests.yaml@main
+    uses: vidimensional/ansible_collection/.github/workflows/tests.yaml@main
