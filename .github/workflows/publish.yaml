@@ -42,4 +42,4 @@ jobs:
       - name: Publish collection
         env:
           ANSIBLE_GALAXY_API_KEY: ${{ secrets.ANSIBLE_GALAXY_API_KEY }}
-        run: ansible-galaxy collection publish --token "${ANSIBLE_GALAXY_API_KEY}" "vidimensional-github_release_lookup-${GITHUB_REF_NAME}.tar.gz"
+        run: ansible-galaxy collection publish --token "${ANSIBLE_GALAXY_API_KEY}" "vidimensional-collection-${GITHUB_REF_NAME}.tar.gz"
