@@ -1,6 +1,6 @@
 # Reusable workflow that builds the package and uploads it to Ansible Galaxy.
 
-name: Tests
+name: Publish
 
 on:
   workflow_call:
