@@ -33,7 +33,7 @@ constrain.
   ansible.builtin.debug:
     msg: "{{ lookup('vidimensional.collection.github_release', repo='hashicorp/terraform') }}"
 
-- name: Get the latest AWS-CLI (including preseleases).
+- name: Get the latest awscli version(including preseleases).
   ansible.builtin.debug:
     msg: "{{ lookup('vidimensional.collection.github_release', repo='aws/aws-cli', spec='latest', allow_prereleases=True) }}"
 
