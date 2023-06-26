@@ -12,7 +12,7 @@ unittest:
 
 .PHONY: docs
 docs:
-	bash scripts/build_docs.sh
+	python scripts/build_docs.py
 
 .PHONY: req requirements requirements-dev
 req: requirements requirements-dev
