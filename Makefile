@@ -7,8 +7,7 @@ sanity:
 unit: unittest
 units: unittest
 unittest:
-	cat requirements* > tests/unit/requirements.txt
-	ansible-test units -v --venv --python 3.10 --color yes --requirements
+	python -m unittest discover --pattern 'test_*.py' -s tests/unit
 
 .PHONY: docs
 docs:

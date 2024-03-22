@@ -34,6 +34,10 @@ jobs:
             pip install -r requirements.txt
           fi
 
+          if [ -f requirements-dev.txt ]; then
+            pip install -r requirements-dev.txt
+          fi
+
       - name: Run Ansible sanity checks
         run: ansible-test sanity -v --venv --redact --python 3.10 --color yes
 
@@ -54,6 +58,4 @@ jobs:
         run: ansible-doc -t lookup github_release -M "${PWD}/plugins/lookup/" --json
 
       - name: Run unit tests
-        run: |
-          cat requirements* > tests/unit/requirements.txt
-          ansible-test units -v --venv --python 3.10 --color yes --requirements
+        run: make unit
